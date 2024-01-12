@@ -167,6 +167,11 @@ namespace CompalintsSystem.Application.Controllers
                 UploadsComplainteId = id,
 
             };
+            TransferComplaintToAnotherUser toAnotherUser = new TransferComplaintToAnotherUser()
+            {
+                ConplaintId = id,
+
+            };
             ComplaintsRejectedVM rejectView = new ComplaintsRejectedVM()
             {
                 UploadsComplainteId = id,
@@ -186,6 +191,7 @@ namespace CompalintsSystem.Application.Controllers
                 AddSolution = addsoiationView,
                 UpComplaintCauseList = await _context.UpComplaintCauses.Where(a => a.UploadsComplainteId == id).ToListAsync(),
                 UpComplaint = UpView,
+                ToAnotherUser = toAnotherUser,
             };
             return View(VM);
         }
@@ -388,6 +394,11 @@ namespace CompalintsSystem.Application.Controllers
                 UploadsComplainteId = id,
 
             };
+            TransferComplaintToAnotherUser toAnotherUser = new TransferComplaintToAnotherUser()
+            {
+                ConplaintId = id,
+
+            };
             ComplaintsRejectedVM rejectView = new ComplaintsRejectedVM()
             {
                 UploadsComplainteId = id,
@@ -399,7 +410,8 @@ namespace CompalintsSystem.Application.Controllers
                 Compalints_SolutionList = await _context.Compalints_Solutions.Where(a => a.UploadsComplainteId == id).ToListAsync(),
                 ComplaintsRejectedList = await _context.ComplaintsRejecteds.Where(a => a.UploadsComplainteId == id).ToListAsync(),
                 RejectedComplaintVM = rejectView,
-                AddSolution = addsoiationView
+                AddSolution = addsoiationView,
+                ToAnotherUser = toAnotherUser,
             };
             return View(VM);
         }
@@ -445,7 +457,11 @@ namespace CompalintsSystem.Application.Controllers
             {
                 UploadsComplainteId = id
             };
+            TransferComplaintToAnotherUser toAnotherUser = new TransferComplaintToAnotherUser()
+            {
+                ConplaintId = id,
 
+            };
             var rejectView = new ComplaintsRejectedVM
             {
                 UploadsComplainteId = id
@@ -470,7 +486,8 @@ namespace CompalintsSystem.Application.Controllers
                 ComplaintsRejectedList = complaintsRejectedList,
                 UpComplaintCauseList = upComplaintCauseList,
                 RejectedComplaintVM = rejectView,
-                AddSolution = addsoiationView
+                AddSolution = addsoiationView,
+                ToAnotherUser = toAnotherUser,
             };
 
             return View(VM);
