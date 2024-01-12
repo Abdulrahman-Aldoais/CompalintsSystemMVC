@@ -162,14 +162,18 @@ namespace CompalintsSystem.Application.Controllers
         public async Task<IActionResult> ViewCompalintDetails(int id)
         {
             var ComplantList = await _compReop.FindAsync(id);
-            AddSolutionVM addsoiationView = new AddSolutionVM()
-            {
-                UploadsComplainteId = id,
+            var currentUser = await GetCurrentUser();
+            var userDropdownsData = await GetCommunicationDropdownsData(currentUser);
+            ViewBag.UsersName = new SelectList(userDropdownsData.ApplicationUsers, "Id", "FullName");
 
-            };
             TransferComplaintToAnotherUser toAnotherUser = new TransferComplaintToAnotherUser()
             {
                 ConplaintId = id,
+
+            };
+            AddSolutionVM addsoiationView = new AddSolutionVM()
+            {
+                UploadsComplainteId = id,
 
             };
             ComplaintsRejectedVM rejectView = new ComplaintsRejectedVM()
@@ -367,9 +371,7 @@ namespace CompalintsSystem.Application.Controllers
         }
         public async Task<IActionResult> ViewCompalintDetails1(int id)
         {
-            //var compalintDetails = await _service.FindAsync(id);
-            //var ComplantList = await _context.UploadsComplainte.Include(a => a.Collegess).Include(a => a.Departmentss).Include(a => a.SubDepartmentss).Include(a => a.Villages).Include(a => a.TypeComplaint).Where(m => m.Id == id).FirstOrDefaultAsync();
-            var ComplantList = await __service.FindAsync(id);
+            var ComplantList = await _compReop.FindAsync(id);
             var currentUser = await GetCurrentUser();
             var userDropdownsData = await GetCommunicationDropdownsData(currentUser);
             ViewBag.UsersName = new SelectList(userDropdownsData.ApplicationUsers, "Id", "FullName");
@@ -384,15 +386,28 @@ namespace CompalintsSystem.Application.Controllers
                 UploadsComplainteId = id,
 
             };
-            ProvideSolutionsVM MV = new ProvideSolutionsVM
+            ComplaintsRejectedVM rejectView = new ComplaintsRejectedVM()
+            {
+                UploadsComplainteId = id,
+
+            };
+            UpComplaintVM UpView = new UpComplaintVM()
+            {
+                UploadsComplainteId = id,
+
+            };
+            ProvideSolutionsVM VM = new ProvideSolutionsVM
             {
                 compalint = ComplantList,
                 Compalints_SolutionList = await _context.Compalints_Solutions.Where(a => a.UploadsComplainteId == id).ToListAsync(),
+                ComplaintsRejectedList = await _context.ComplaintsRejecteds.Where(a => a.UploadsComplainteId == id).ToListAsync(),
+                RejectedComplaintVM = rejectView,
                 AddSolution = addsoiationView,
-                ToAnotherUser = toAnotherUser
+                UpComplaintCauseList = await _context.UpComplaintCauses.Where(a => a.UploadsComplainteId == id).ToListAsync(),
+                UpComplaint = UpView,
+                ToAnotherUser = toAnotherUser,
             };
-            return View(MV);
-
+            return View(VM);
         }
 
 
