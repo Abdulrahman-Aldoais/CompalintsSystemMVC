@@ -370,6 +370,15 @@ namespace CompalintsSystem.Application.Controllers
             //var compalintDetails = await _service.FindAsync(id);
             //var ComplantList = await _context.UploadsComplainte.Include(a => a.Collegess).Include(a => a.Departmentss).Include(a => a.SubDepartmentss).Include(a => a.Villages).Include(a => a.TypeComplaint).Where(m => m.Id == id).FirstOrDefaultAsync();
             var ComplantList = await __service.FindAsync(id);
+            var currentUser = await GetCurrentUser();
+            var userDropdownsData = await GetCommunicationDropdownsData(currentUser);
+            ViewBag.UsersName = new SelectList(userDropdownsData.ApplicationUsers, "Id", "FullName");
+
+            TransferComplaintToAnotherUser toAnotherUser = new TransferComplaintToAnotherUser()
+            {
+                ConplaintId = id,
+
+            };
             AddSolutionVM addsoiationView = new AddSolutionVM()
             {
                 UploadsComplainteId = id,
@@ -379,7 +388,8 @@ namespace CompalintsSystem.Application.Controllers
             {
                 compalint = ComplantList,
                 Compalints_SolutionList = await _context.Compalints_Solutions.Where(a => a.UploadsComplainteId == id).ToListAsync(),
-                AddSolution = addsoiationView
+                AddSolution = addsoiationView,
+                ToAnotherUser = toAnotherUser
             };
             return View(MV);
 
