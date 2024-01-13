@@ -228,7 +228,7 @@ namespace CompalintsSystem.EF.Repositories
             await _context.SaveChangesAsync();
         }
 
-        public async Task<SelectDataCommuncationDropdownsVM> GetAddCommunicationDropdownsValues(int subDirctoty, int DepartmentsId, int CollegesId, string role, string roleId)
+        public async Task<SelectDataCommuncationDropdownsVM> GetAddCommunicationDropdownsValues(string subDirctoty, int DepartmentsId, int CollegesId, string role, string roleId)
         {
             var userManager = _userManager;// initialize your user manager here
             if (role == "AdminColleges")
@@ -393,6 +393,46 @@ namespace CompalintsSystem.EF.Repositories
 
                 return responseAdmin;
             }
+        }
+
+
+        public async Task<SelectDataCommuncationDropdownsVM> GetUserDropdownsValues(string userId, int subDirctoty, int DepartmentsId, int CollegesId, string role, string roleId)
+        {
+            var userManager = _userManager;// initialize your user manager here
+            var usersQuery = _context.Users
+              .Join(_context.UserRoles, u => u.Id, ur => ur.UserId, (u, ur) => new { User = u, UserRole = ur })
+              .Where(x => x.UserRole.RoleId == roleId || x.User.CollegesId == CollegesId ||
+                           x.User.DepartmentsId == DepartmentsId ||
+                           x.User.SubDepartmentsId == subDirctoty && x.User.Id != userId && x.UserRole.RoleId != "8faa31eb-ded0-4711-8e0b-0f509c4b332f"
+                           )
+              .OrderBy(x => x.User.FullName)
+              .Select(x => new ApplicationUser
+              {
+                  Id = x.User.Id,
+                  FullName = x.User.FullName + " ( " + x.User.UserRoleName + "  )",
+              });
+
+            var applicationUsers = await usersQuery.ToListAsync();
+
+            var typeCommunications = await _context.TypeCommunications
+                .OrderBy(tc => tc.Type)
+                .ToListAsync();
+
+            var response = new SelectDataCommuncationDropdownsVM
+            {
+                ApplicationUsers = applicationUsers,
+                TypeCommunications = typeCommunications
+            };
+
+
+            foreach (var user in response.ApplicationUsers)
+            {
+                var identityUser = await userManager.FindByIdAsync(user.Id);
+                var roles = await userManager.GetRolesAsync(identityUser);
+                user.UserRoles = roles.Select(role => new IdentityRole { Name = role }).ToList();
+            }
+
+            return response;
         }
 
 

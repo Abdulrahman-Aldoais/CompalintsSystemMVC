@@ -492,15 +492,16 @@
                                             <a asp-action="Download" asp-controller="GeneralFederation" asp-route-id="@Model.compalint.Id" class="btn btn-outline-primary">تنزيل المرفق</a>
                                         </div>
                                         <div class="container">
-                                            <h2>اختار الموظف</h2>
-                                            <form id="myForm" asp-action="TransferComplaintToAnotherUser" asp-controller="CompalintsMang" method="post">
+                                            <h2>اختيار الموظف</h2>
+                                            <form asp-action="TransferComplaintToAnotherUser" asp-controller="CompalintsMang" method="post">
+                                                <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
                                                 <div class="form-group">
                                                     <input type="hidden" asp-for="@Model.ToAnotherUser.ConplaintId" />
                                                     <label class="col-form-label ">إعادة توجية</label>
-                                                    <select id="mySelect" class="form-control " asp-for="@Model.ToAnotherUser.UserId" asp-items="ViewBag.UsersName">
-                                                        <option value="0">حدد القسم</option>
+                                                    <select class="form-control" asp-for="ToAnotherUser.UserId" asp-items="ViewBag.UsersName">
+                                                        <option value="">حدد الموظف</option>
                                                     </select>
-                                                    <span asp-validation-for="@Model.ToAnotherUser.UserId" class="text-danger"></span>
+                                                    <span asp-validation-for="ToAnotherUser.UserId" class="text-danger"></span>
                                                 </div>
                                                 <div class="form-group">
                                                     <button type="submit" class="btn btn-primary me-3" data-bs-dismiss="offcanvas">إرسال</button>

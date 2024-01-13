@@ -24,6 +24,7 @@ namespace CompalintsSystem.Core.Interfaces
         Task GetAllGategoryCompAsync();
         Task<SelectDataCommuncationDropdownsVM> GetAddCommunicationDropdownsValues(int subDirctoty, int DepartmentsId, int CollegesId, string role, string roleId);
         Task<SelectDataCommuncationDropdownsVM> GetAddCommunicationDropdownsValues2();
+        Task<SelectDataCommuncationDropdownsVM> GetUserDropdownsValues(string userId, int subDirctoty, int DepartmentsId, int CollegesId, string role, string roleId);
     }
 }
 

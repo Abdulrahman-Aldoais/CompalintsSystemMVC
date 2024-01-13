@@ -82,7 +82,7 @@ namespace CompalintsSystem.Application.Controllers
             //var Gov = currentUser?.Collegess.Id;
 
 
-            var allCompalintsVewi = _compReop.GetAll().Where(g => g.SubDepartmentsId == currentUser.SubDepartmentsId && g.StagesComplaintId == 1).ToList();
+            var allCompalintsVewi = _compReop.GetAll().ToList();
 
             var compalintDropdownsData = await _service.GetNewCompalintsDropdownsValues();
             ViewBag.StatusCompalints = new SelectList(compalintDropdownsData.StatusCompalints, "Id", "Name");
@@ -138,8 +138,7 @@ namespace CompalintsSystem.Application.Controllers
                 st => st.StagesComplaint);
             if (AllRejectedComplaints != null)
             {
-                var Getrejected = AllRejectedComplaints.Where(g => g.Colleges.Id == currentUser.CollegesId
-            && g.StatusCompalint.Id == 3 && g.StagesComplaint.Id == 4);
+                var Getrejected = AllRejectedComplaints.Where(g => g.StatusCompalint.Id == 3 && g.StagesComplaint.Id == 4);
                 var compalintDropdownsData = await _service.GetNewCompalintsDropdownsValues();
 
                 ViewBag.StatusCompalints = new SelectList(compalintDropdownsData.StatusCompalints, "Id", "Name");
@@ -147,7 +146,7 @@ namespace CompalintsSystem.Application.Controllers
 
                 ViewBag.status = ViewBag.StatusCompalints;
                 int totalCompalints = Getrejected.Count();
-                //ViewBag.TotalCompalints = Convert.ToInt32(page == 0 ? "false" : totalCompalints);
+
                 ViewBag.totalCompalints = totalCompalints;
 
                 return View(Getrejected);
@@ -163,7 +162,7 @@ namespace CompalintsSystem.Application.Controllers
         {
             var ComplantList = await _compReop.FindAsync(id);
             var currentUser = await GetCurrentUser();
-            var userDropdownsData = await GetCommunicationDropdownsData(currentUser);
+            var userDropdownsData = await GetUserDropdownsData(currentUser);
             ViewBag.UsersName = new SelectList(userDropdownsData.ApplicationUsers, "Id", "FullName");
 
             TransferComplaintToAnotherUser toAnotherUser = new TransferComplaintToAnotherUser()
@@ -373,7 +372,8 @@ namespace CompalintsSystem.Application.Controllers
         {
             var ComplantList = await _compReop.FindAsync(id);
             var currentUser = await GetCurrentUser();
-            var userDropdownsData = await GetCommunicationDropdownsData(currentUser);
+
+            var userDropdownsData = await GetUserDropdownsData(currentUser);
             ViewBag.UsersName = new SelectList(userDropdownsData.ApplicationUsers, "Id", "FullName");
 
             TransferComplaintToAnotherUser toAnotherUser = new TransferComplaintToAnotherUser()
@@ -414,6 +414,9 @@ namespace CompalintsSystem.Application.Controllers
         public async Task<IActionResult> ViewCompalintRejectedDetails(int id)
         {
             var ComplantList = await _compReop.FindAsync(id);
+            var currentUser = await GetCurrentUser();
+            var userDropdownsData = await GetUserDropdownsData(currentUser);
+            ViewBag.UsersName = new SelectList(userDropdownsData.ApplicationUsers, "Id", "FullName");
             AddSolutionVM addsoiationView = new AddSolutionVM()
             {
                 UploadsComplainteId = id,
@@ -1139,6 +1142,20 @@ namespace CompalintsSystem.Application.Controllers
             var roleId = _context.Roles.FirstOrDefault(role => role.Name == roles.FirstOrDefault())?.Id;
 
             return await __service.GetAddCommunicationDropdownsValues(subDepartmentsId, DepartmentsId, CollegesId, rolesString, roleId);
+        }
+
+        private async Task<SelectDataCommuncationDropdownsVM> GetUserDropdownsData(ApplicationUser currentUser)
+        {
+            var CollegesId = currentUser.CollegesId;
+            var DepartmentsId = currentUser.DepartmentsId;
+            var subDepartmentsId = currentUser.SubDepartmentsId;
+            var userId = currentUser.Id;
+
+            var roles = await userManager.GetRolesAsync(currentUser);
+            var rolesString = string.Join(",", roles);
+            var roleId = _context.Roles.FirstOrDefault(role => role.Name == roles.FirstOrDefault())?.Id;
+
+            return await __service.GetUserDropdownsValues(userId, subDepartmentsId, DepartmentsId, CollegesId, rolesString, roleId);
         }
 
 
