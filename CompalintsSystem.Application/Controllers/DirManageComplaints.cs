@@ -282,9 +282,9 @@ namespace CompalintsSystem.Application.Controllers
 
             var compBy = allCompalintsVewi
                 .Where(g =>
-                    g.SubDepartmentsId == currentUser.SubDepartmentsId &&
-                    g.StagesComplaintId == 2 &&
-                    g.StatusCompalintId == 5
+                    g.CollegesId == currentUser.CollegesId ||
+                    g.DepartmentsId == currentUser.DepartmentsId ||
+                    g.SubDepartmentsId == currentUser.SubDepartmentsId
                 );
 
             int totalCompalints = compBy.Count();

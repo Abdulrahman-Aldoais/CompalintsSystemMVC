@@ -88,6 +88,7 @@ namespace CompalintsSystem.Application.Controllers
             var AllComplaintsUp = await _compReop.GetAllAsync(
                 g => g.Colleges,
                 d => d.Departments,
+                t => t.TypeComplaint,
                 s => s.SubDepartments,
                 n => n.StatusCompalint,
                 st => st.StagesComplaint,
